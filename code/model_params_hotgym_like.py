@@ -29,7 +29,7 @@ MODEL_PARAMS = {
     # Intermediate variables used to compute fields in modelParams and also
     # referenced from the control section.
     'aggregationInfo': {   'days': 0,
-        'fields': [('consumption', 'sum')],
+        'fields': [('count', 'sum')],
         'hours': 0,
         'microseconds': 0,
         'milliseconds': 0,
@@ -63,11 +63,11 @@ MODEL_PARAMS = {
                     'type': 'RandomDistributedScalarEncoder',
                     },
                 u'Influenza': {
-                'fieldname': u'count',
-                'resolution': 5,
-                'seed': 1,
-                'name': u'Influenza',
-                'type': 'RandomDistributedScalarEncoder'
+                    'fieldname': u'Influenza',
+                    'resolution': 5,
+                    'seed': 1,
+                    'name': u'Influenza',
+                    'type': 'RandomDistributedScalarEncoder'
                 },
 
                 'timestamp_timeOfDay': {   'fieldname': u'timestamp',
@@ -244,7 +244,7 @@ MODEL_PARAMS = {
 
             # This is set after the call to updateConfigFromSubConfig and is
             # computed from the aggregationInfo and predictAheadTime.
-            'steps': '1,5',
+            'steps': '1,2,3,5',
 
             'implementation': 'cpp',
         },
