@@ -25,7 +25,7 @@ MODEL_PARAMS = \
                                                                     'fieldname': 'faelle',
                                                                     'maxval': 98,
                                                                     'minval': 1,
-                                                                    'n': 401,
+                                                                    'n': 400,
                                                                     'name': '_classifierInput',
                                                                     'type': 'ScalarEncoder',
                                                                     'w': 21},
