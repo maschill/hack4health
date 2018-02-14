@@ -33,14 +33,14 @@ from nupic.frameworks.opf.metrics import MetricSpec
 from nupic.frameworks.opf.model_factory import ModelFactory
 from nupic.frameworks.opf.prediction_metrics_manager import MetricsManager
 
-import model_params
+import model_params_hotgym_like as model_params
 
 _LOGGER = logging.getLogger(__name__)
 
 _INPUT_FILE_PATH = resource_filename(
   "nupic.datafiles", "extra/hotgym/rec-center-hourly.csv"
 )
-_INPUT_FILE_PATH = '/net/home/student/m/mschilling/Documents/hack4health/gtrends_and_rki.csv'
+_INPUT_FILE_PATH = 'data/smoothed.csv'
 
 print _INPUT_FILE_PATH
 
@@ -59,7 +59,7 @@ _METRIC_SPECS = (
                params={'errorMetric': 'altMAPE', 'window': 1000, 'steps': 1}),
 )
 
-_NUM_RECORDS = 680
+_NUM_RECORDS = 676
 
 
 def createModel():
@@ -67,7 +67,7 @@ def createModel():
 
 import matplotlib.pyplot as plt
 def runHotgym():
-  old = None 
+  old, old2 = None,None
   predictions = []
   model = createModel()
   model.enableInference({'predictedField': 'count'})
@@ -80,15 +80,15 @@ def runHotgym():
     reader.next()
     for i, record in enumerate(reader, start=1):
       modelInput = dict(zip(headers, record))
-      print modelInput
       modelInput["count"] = float(modelInput["count"])
-      modelInput["Influenza"] = int(modelInput["Influenza"])
+      modelInput["Influenza"] = float(modelInput["Influenza"])
       modelInput["timestamp"] = datetime.datetime.strptime(modelInput["timestamp"], "%Y-%m-%d")
       result = model.run(modelInput)
       result.metrics = metricsManager.update(result)
       isLast = i == _NUM_RECORDS
       if old:
           predictions.append([old,float(result.inferences["multiStepBestPredictions"][1])])
+      old2 = old
       old = modelInput["timestamp"]
       print result.inferences["multiStepBestPredictions"][1]
       if i % 100 == 0 or isLast:
@@ -106,4 +106,4 @@ if __name__ == "__main__":
 	predictions = runHotgym()
 	with open('influenza_trend_output.csv', 'wb') as f:
 		cw = csv.writer(f)
-		cw.writerows(r+[""] for r in predictions)
+		cw.writerows(r for r in predictions)
