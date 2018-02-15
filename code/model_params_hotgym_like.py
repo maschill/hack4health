@@ -69,15 +69,112 @@ MODEL_PARAMS = {
                     'name': u'Influenza',
                     'type': 'RandomDistributedScalarEncoder'
                 },
-
+                u'Windrichtung':None,
+                # {
+                # 'fieldname': u'Windrichtung',
+                # 'resolution': 15,
+                # 'seed': 1,
+                # 'name': u'Windrichtung',
+                # 'type': 'RandomDistributedScalarEncoder'
+                # },
+                u'Windgeschwindigkeit':None,
+                # {
+                # 'fieldname': u'Windgeschwindigkeit',
+                # 'resolution': 5,
+                # 'seed': 1,
+                # 'name': u'Windgeschwindigkeit',
+                # 'type': 'RandomDistributedScalarEncoder'
+                # },
+                u'Temperatur': None,
+                # {
+                # 'fieldname': u'Temperatur',
+                # 'resolution': 1,
+                # 'seed': 1,
+                # 'name': u'Temperatur',
+                # 'type': 'RandomDistributedScalarEncoder'
+                # },
+                u'Luftfeuchte': None,
+                # {
+                # 'fieldname': u'Luftfeuchte',
+                # 'resolution': 2,
+                # 'seed': 1,
+                # 'name': u'Luftfeuchte',
+                # 'type': 'RandomDistributedScalarEncoder'
+                # },
+                u"Barnim County":{
+                "fieldname": u"Barnim County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Barnim County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"Dahme-Spreewald County":{
+                "fieldname": u"Dahme-Spreewald County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Dahme-Spreewald County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"Havelland County":{
+                "fieldname": u"Havelland County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Havelland County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"Markisch-Oderland County":{
+                "fieldname": u"Markisch-Oderland County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Markisch-Oderland County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"Oberhavel County":{
+                "fieldname": u"Oberhavel County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Oberhavel County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"Oder-Spree County":{
+                "fieldname": u"Oder-Spree County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Oder-Spree County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"City of Potsdam":{
+                "fieldname": u"City of Potsdam",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"City of Potsdam",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"Potsdam-Mittelmark County":{
+                "fieldname": u"Potsdam-Mittelmark County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Potsdam-Mittelmark County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u"Teltow-Flaming County":{
+                "fieldname": u"Teltow-Flaming County",
+                "resolution": 2,
+                "seed": 1,
+                "name": u"Teltow-Flaming County",
+                "type": "RandomDistributedScalarEncoder"
+                },
+                u'Total': None,
                 'timestamp_timeOfDay': {   'fieldname': u'timestamp',
                                            'name': u'timestamp_timeOfDay',
                                            'timeOfDay': (21, 1),
-                                           'type': 'DateEncoder'},
+                                           'type': 'DateEncoder'
+                },
                 'timestamp_weekend': {   'fieldname': u'timestamp',
                                          'name': u'timestamp_weekend',
                                          'type': 'DateEncoder',
-                                         'weekend': 21}
+                                         'weekend': 21
+                                }
             },
 
             # A dictionary specifying the period for automatically-generated
@@ -124,7 +221,7 @@ MODEL_PARAMS = {
             # potentialPct
             # What percent of the columns's receptive field is available
             # for potential synapses.
-            'potentialPct': 0.85,
+            'potentialPct': 0.8,
 
             # The default connected threshold. Any synapse whose
             # permanence value is above the connected threshold is
@@ -132,9 +229,9 @@ MODEL_PARAMS = {
             # cell's firing. Typical value is 0.10.
             'synPermConnected': 0.1,
 
-            'synPermActiveInc': 0.04,
+            'synPermActiveInc': 0.05,
 
-            'synPermInactiveDec': 0.005,
+            'synPermInactiveDec': 0.07,
 
             # boostStrength controls the strength of boosting. It should be a
             # a number greater or equal than 0.0. No boosting is applied if
@@ -213,14 +310,14 @@ MODEL_PARAMS = {
             # during search for the best-matching segments.
             # None=use default
             # Replaces: tpMinThreshold
-            'minThreshold': 12,
+            'minThreshold': 10,
 
             # Segment activation threshold.
             # A segment is active if it has >= tpSegmentActivationThreshold
             # connected synapses that are active due to infActiveState
             # None=use default
             # Replaces: tpActivationThreshold
-            'activationThreshold': 16,
+            'activationThreshold': 12,
 
             'outputType': 'normal',
 

@@ -40,7 +40,7 @@ _LOGGER = logging.getLogger(__name__)
 _INPUT_FILE_PATH = resource_filename(
   "nupic.datafiles", "extra/hotgym/rec-center-hourly.csv"
 )
-_INPUT_FILE_PATH = 'data/smoothed.csv'
+_INPUT_FILE_PATH = 'data/lk_added.csv'
 
 print _INPUT_FILE_PATH
 
@@ -59,7 +59,7 @@ _METRIC_SPECS = (
                params={'errorMetric': 'altMAPE', 'window': 1000, 'steps': 1}),
 )
 
-_NUM_RECORDS = 676
+_NUM_RECORDS = 524
 
 
 def createModel():
@@ -82,15 +82,28 @@ def runHotgym():
       modelInput = dict(zip(headers, record))
       modelInput["count"] = float(modelInput["count"])
       modelInput["Influenza"] = float(modelInput["Influenza"])
+      modelInput["Windrichtung"] = float(modelInput["Windrichtung"])
+      modelInput["Temperatur"] = float(modelInput["Temperatur"])
+      modelInput["Luftfeuchte"] = float(modelInput["Luftfeuchte"])
+      modelInput["Windgeschwindigkeit"] = float(modelInput["Windgeschwindigkeit"])
+      modelInput["Barnim County"] = float(modelInput["Barnim County"])
+      modelInput["Dahme-Spreewald County"] = float(modelInput["Dahme-Spreewald County"])
+      modelInput["Havelland County"] = float(modelInput["Havelland County"])
+      modelInput["Markisch-Oderland County"] = float(modelInput["Markisch-Oderland County"])
+      modelInput["Oberhavel County"] = float(modelInput["Oberhavel County"])
+      modelInput["Oder-Spree County"] = float(modelInput["Oder-Spree County"])
+      modelInput["City of Potsdam"] = float(modelInput["City of Potsdam"])
+      modelInput["Potsdam-Mittelmark County"] = float(modelInput["Potsdam-Mittelmark County"])
+      modelInput["Teltow-Flaming County"] = float(modelInput["Teltow-Flaming County"])
       modelInput["timestamp"] = datetime.datetime.strptime(modelInput["timestamp"], "%Y-%m-%d")
       result = model.run(modelInput)
       result.metrics = metricsManager.update(result)
       isLast = i == _NUM_RECORDS
-      if old:
+      if old2:
           predictions.append([old,float(result.inferences["multiStepBestPredictions"][1])])
       old2 = old
       old = modelInput["timestamp"]
-      print result.inferences["multiStepBestPredictions"][1]
+    #   print result.inferences["multiStepBestPredictions"][1]
       if i % 100 == 0 or isLast:
         _LOGGER.info("After %i records, 1-step altMAPE=%f", i,
                     result.metrics["multiStepBestPredictions:multiStep:"
@@ -104,6 +117,6 @@ def runHotgym():
 if __name__ == "__main__":
 	logging.basicConfig(level=logging.INFO)
 	predictions = runHotgym()
-	with open('influenza_trend_output.csv', 'wb') as f:
+	with open('smoothed_output_mit_nachbarn.csv', 'wb') as f:
 		cw = csv.writer(f)
 		cw.writerows(r for r in predictions)
