@@ -28,6 +28,8 @@ score.
 import csv
 import datetime
 import logging
+from dateutil import rrule
+import time
 
 from pkg_resources import resource_filename
 
@@ -35,18 +37,21 @@ from nupic.frameworks.opf.model_factory import ModelFactory
 
 import model_params
 
+import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.dates as mdates
+
 _LOGGER = logging.getLogger(__name__)
 
-# _INPUT_DATA_FILE = resource_filename(
-#   "nupic.datafiles", "extra/hotgym/rec-center-hourly.csv"
-# )
-# use our input file
 _INPUT_FILE_PATH = '../data/smoothed.csv'
 
 _OUTPUT_PATH = "anomaly_scores.csv"
 
-_ANOMALY_THRESHOLD = 0.45
+_ANOMALY_THRESHOLD = 0.2
 
+_EARLIEST = datetime.datetime(2001, 1, 1)
 
 def createModel():
     return ModelFactory.create(model_params.MODEL_PARAMS)
@@ -55,6 +60,11 @@ def createModel():
 def runHotgymAnomaly():
     model = createModel()
     model.enableInference({'predictedField': 'count'})
+    block = False
+    count = 0
+    anomalies = []
+    start = None
+    end = None
     with open (_INPUT_FILE_PATH) as fin:
         reader = csv.reader(fin)
         csvWriter = csv.writer(open(_OUTPUT_PATH,"wb"))
@@ -72,11 +82,69 @@ def runHotgymAnomaly():
             csvWriter.writerow([modelInput["timestamp"], int(modelInput["count"]),
                                 anomalyScore])
             if anomalyScore > _ANOMALY_THRESHOLD:
-                _LOGGER.info("Anomaly detected at [%s]. Anomaly score: %f.",
-                             result.rawInput["timestamp"], anomalyScore)
+                if not block:
+                    block = True
+                    count += 1
+                    start = result.rawInput['timestamp']
+                    _LOGGER.info("Anomaly detected at [%s]. Anomaly score: %f.",
+                                 result.rawInput["timestamp"], anomalyScore)
+                else:
+                    count += 1
+            elif count > 0:
+                count += 1
+            if (count >= 5) and (anomalyScore < 0.02):
+                count = 0
+                block = False
+                end = result.rawInput['timestamp']
+                anomalies.append((start, end))
+        # also get outbreak at end of data
+        end = result.rawInput['timestamp']
+        anomalies.append((start, end))
+    return anomalies
 
 print("Anomaly scores have been written to",_OUTPUT_PATH)
 
+def weeks_between(start_date, end_date):
+    weeks = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=end_date)
+    return weeks.count()
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    runHotgymAnomaly()
+    anomalies = runHotgymAnomaly()
+
+    # load data
+    data = pd.read_csv("anomaly_scores.csv")
+    data.timestamp = pd.to_datetime(data.timestamp)
+    data = data.loc[data.timestamp > _EARLIEST]
+    data.head()
+
+    # In[10]:
+
+    fig, ax = plt.subplots(figsize=(16, 8))
+    ax2 = ax.twinx()
+
+    # plot count in blue
+    ax.plot(data.timestamp, data["count"], c='b')
+    ax.set_xlabel('time')
+    ax.set_ylabel('count')
+
+    # plot anomaly score in red
+    ax2.plot(data.timestamp, data.anomaly_score, c='r')
+    ax2.set_ylabel('anomaly score')
+
+    # plot anomalies
+    for (startTime, endTime) in anomalies:
+        if startTime <= _EARLIEST:
+            continue
+        # convert to matplotlib date representation
+        start = mdates.date2num(startTime)
+        end = mdates.date2num(endTime)
+        width = end - start
+
+        # Plot rectangle
+        rect = patches.Rectangle((start, 0), width, 1, color='red', alpha=0.2)
+        ax2.add_patch(rect)
+
+
+    plt.show()
+
