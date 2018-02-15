@@ -55,20 +55,20 @@ MODEL_PARAMS = {
 
             # Include the encoders we use
             'encoders': {
-                u'count':    {
-                    'fieldname': u'count',
-                    'resolution': 5,
-                    'seed': 1,
-                    'name': u'count',
-                    'type': 'RandomDistributedScalarEncoder',
-                    },
-                u'Influenza': {
-                    'fieldname': u'Influenza',
-                    'resolution': 5,
-                    'seed': 1,
-                    'name': u'Influenza',
-                    'type': 'RandomDistributedScalarEncoder'
-                },
+                # u'y':    {
+                #     'fieldname': u'y',
+                #     'resolution': 5,
+                #     'seed': 1,
+                #     'name': u'y',
+                #     'type': 'RandomDistributedScalarEncoder',
+                #     },
+                # u'x': {
+                #     'fieldname': u'x',
+                #     'resolution': 5,
+                #     'seed': 1,
+                #     'name': u'x',
+                #     'type': 'RandomDistributedScalarEncoder'
+                # }
                 u'Windrichtung':None,
                 # {
                 # 'fieldname': u'Windrichtung',

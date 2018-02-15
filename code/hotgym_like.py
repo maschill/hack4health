@@ -37,29 +37,26 @@ import model_params_hotgym_like as model_params
 
 _LOGGER = logging.getLogger(__name__)
 
-_INPUT_FILE_PATH = resource_filename(
-  "nupic.datafiles", "extra/hotgym/rec-center-hourly.csv"
-)
-_INPUT_FILE_PATH = 'data/lk_added.csv'
+_INPUT_FILE_PATH = '../local_hack4health/sim.csv'
 
 print _INPUT_FILE_PATH
 
 _METRIC_SPECS = (
     MetricSpec(field='count', metric='multiStep',
                inferenceElement='multiStepBestPredictions',
-               params={'errorMetric': 'aae', 'window': 1000, 'steps': 1}),
+               params={'errorMetric': 'aae', 'window': 100, 'steps': 2}),
     MetricSpec(field='count', metric='trivial',
                inferenceElement='prediction',
-               params={'errorMetric': 'aae', 'window': 1000, 'steps': 1}),
+               params={'errorMetric': 'aae', 'window': 100, 'steps': 2}),
     MetricSpec(field='count', metric='multiStep',
                inferenceElement='multiStepBestPredictions',
-               params={'errorMetric': 'altMAPE', 'window': 1000, 'steps': 1}),
+               params={'errorMetric': 'altMAPE', 'window': 100, 'steps': 2}),
     MetricSpec(field='count', metric='trivial',
                inferenceElement='prediction',
-               params={'errorMetric': 'altMAPE', 'window': 1000, 'steps': 1}),
+               params={'errorMetric': 'altMAPE', 'window': 100, 'steps': 2}),
 )
 
-_NUM_RECORDS = 524
+_NUM_RECORDS =
 
 
 def createModel():
@@ -96,13 +93,15 @@ def runHotgym():
       modelInput["Potsdam-Mittelmark County"] = float(modelInput["Potsdam-Mittelmark County"])
       modelInput["Teltow-Flaming County"] = float(modelInput["Teltow-Flaming County"])
       modelInput["timestamp"] = datetime.datetime.strptime(modelInput["timestamp"], "%Y-%m-%d")
+    #   modelInput['x'] = float(modelInput['x'])
+    #   modelInput['y'] = float(modelInput['y'])
       result = model.run(modelInput)
       result.metrics = metricsManager.update(result)
       isLast = i == _NUM_RECORDS
       if old2:
           predictions.append([old,float(result.inferences["multiStepBestPredictions"][1])])
       old2 = old
-      old = modelInput["timestamp"]
+      old = modelInput["x"]
     #   print result.inferences["multiStepBestPredictions"][1]
       if i % 100 == 0 or isLast:
         _LOGGER.info("After %i records, 1-step altMAPE=%f", i,
@@ -117,6 +116,6 @@ def runHotgym():
 if __name__ == "__main__":
 	logging.basicConfig(level=logging.INFO)
 	predictions = runHotgym()
-	with open('smoothed_output_mit_nachbarn.csv', 'wb') as f:
+	with open('custom_err.csv', 'wb') as f:
 		cw = csv.writer(f)
 		cw.writerows(r for r in predictions)
